@@ -77,6 +77,40 @@ def AddEmp():
     finally:
         cursor.close()
 
+    @app.route("/getemp", methods=['GET', 'POST'])
+def GetEmp():
+    if request.method == 'POST':  # When someone submits the form
+        emp_id = request.form['emp_id']  # Get the employee ID from the form
+        cursor = db_conn.cursor()  # Start a connection to the database
+
+        # SQL query to find the employee
+        query = "SELECT * FROM employee WHERE emp_id = %s"
+        try:
+            cursor.execute(query, (emp_id,))  # Execute the query with the given emp_id
+            record = cursor.fetchone()  # Get the first result (if any)
+
+            if record:  # If we find an employee
+                emp_data = {
+                    "Employee ID": record[0],
+                    "First Name": record[1],
+                    "Last Name": record[2],
+                    "Primary Skill": record[3],
+                    "Location": record[4],
+                }
+                return render_template('GetEmpOutput.html', data=emp_data)  # Show details
+            else:  # If no employee is found
+                return "Employee not found."
+        except Exception as e:  # Catch any errors
+            return f"Error: {str(e)}"
+        finally:
+            cursor.close()  # Close the database connection
+    else:  # If someone just opens the page without submitting
+        return render_template('GetEmp.html')  # Show the form to enter an employee ID
+
+# Existing "run the app" code...
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=80, debug=True)
+
     print("all modification done...")
     return render_template('AddEmpOutput.html', name=emp_name)
 
