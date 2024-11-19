@@ -90,7 +90,7 @@ if __name__ == '__main__':
 
 
 
-from flask import Flask, request, render_template_string
+from flask import Flask, request, render_template
 
 app = Flask(__name__)
 
@@ -99,7 +99,7 @@ employee_data = []
 
 @app.route('/')
 def home():
-    return render_template_string(open('index.html').read())
+    return render_template('index.html')  # This serves the index.html file
 
 # Route to get employee info
 @app.route('/getemp', methods=['GET'])
@@ -132,5 +132,6 @@ def add_emp():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
 
 
