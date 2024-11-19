@@ -33,7 +33,7 @@ def about():
 
 @app.route("/addemp", methods=['POST'])
 def AddEmp():
-    emp_id = request.form.get('emp_id')
+    empid = request.form.get('empid')
     first_name = request.form.get('first_name')
     last_name = request.form.get('last_name')
     pri_skill = request.form.get('pri_skill')
@@ -47,12 +47,12 @@ def AddEmp():
         return "Please select a file"
 
     try:
-        cursor.execute(insert_sql, (emp_id, first_name, last_name, pri_skill, location))
+        cursor.execute(insert_sql, (empid, first_name, last_name, pri_skill, location))
         db_conn.commit()
         emp_name = f"{first_name} {last_name}"
 
         # Upload image file to S3
-        emp_image_file_name_in_s3 = f"emp-id-{emp_id}_image_file"
+        emp_image_file_name_in_s3 = f"emp-id-{empid}_image_file"
         s3 = boto3.resource('s3')
 
         try:
@@ -84,13 +84,13 @@ def AddEmp():
 @app.route("/getemp", methods=['GET', 'POST'])
 def GetEmp():
     if request.method == 'POST':  # When someone submits the form
-        emp_id = request.form['emp_id']  # Get the employee ID from the form
+        empid = request.form['empid']  # Get the employee ID from the form
         cursor = db_conn.cursor()  # Start a connection to the database
 
         # SQL query to find the employee
-        query = "SELECT * FROM employee WHERE emp_id = %s"
+        query = "SELECT * FROM employee WHERE empid = %s"
         try:
-            cursor.execute(query, (emp_id,))  # Execute the query with the given emp_id
+            cursor.execute(query, (empid,))  # Execute the query with the given empid
             record = cursor.fetchone()  # Get the first result (if any)
 
             if record:  # If we find an employee
