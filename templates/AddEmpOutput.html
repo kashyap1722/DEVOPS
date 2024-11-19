@@ -1,47 +1,37 @@
-@app.route("/addemp", methods=['POST'])
-def AddEmp():
-    empid = request.form.get('empid')
-    first_name = request.form.get('first_name')
-    last_name = request.form.get('last_name')
-    pri_skill = request.form.get('pri_skill')
-    location = request.form.get('location')
-    emp_image_file = request.files.get('emp_image_file')
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Jayanth Kasyap info</title>
+</head>
+<center>
+	<font color="black" size="4" style="font-family: avenir">
 
-    if not emp_image_file or emp_image_file.filename == "":
-        return "Please select a file"
+		<h1 style="color: DodgerBlue">Employee Database</h1>
 
-    insert_sql = "INSERT INTO employee VALUES (%s, %s, %s, %s, %s)"
-    cursor = db_conn.cursor()
+		<body bgcolor="lightgrey">
 
-    try:
-        cursor.execute(insert_sql, (empid, first_name, last_name, pri_skill, location))
-        db_conn.commit()
-        emp_name = f"{first_name} {last_name}"
+			<form action="/addemp" autocomplete="on" method = "POST" enctype="multipart/form-data">
 
-        # Upload image file to S3
-        emp_image_file_name_in_s3 = f"emp-id-{empid}_image_file"
-        s3 = boto3.resource('s3')
+				<button type="submit" formaction="/getemp" style="background: grey; height: 45px; width: 200px; color:white; font:oblique;">GET EMPLOYEE INFORMATION</button><br><br>
 
-        try:
-            s3.Bucket(custombucket).put_object(Key=emp_image_file_name_in_s3, Body=emp_image_file)
-            bucket_location = boto3.client('s3').get_bucket_location(Bucket=custombucket)
-            s3_location = bucket_location['LocationConstraint']
+		  		Employee ID:<br> <input style="height:25px;font-size:14pt; color:grey;" type="number" name="emp_id" autofocus size="40"><br><br>
 
-            if s3_location is None:
-                s3_location = ''
-            else:
-                s3_location = f"-{s3_location}"
+		  		First Name:<br> <input style="height:25px;font-size:14pt;color:grey;" type="text" name="first_name" ><br><br>
 
-            object_url = f"https://s3{s3_location}.amazonaws.com/{custombucket}/{emp_image_file_name_in_s3}"
+		  		Last Name:<br> <input style="height:25px;font-size:14pt;color:grey;" type="text" name="last_name"><br><br>
 
-        except Exception as e:
-            return f"Error uploading to S3: {str(e)}"
+		  		Primary Skills:<br> <input style="height:25px;font-size:14pt;color:grey;" type="text" name="pri_skill"><br><br>
 
-    except Exception as db_error:
-        return f"Database Error: {str(db_error)}"
+		  		Location:<br> <input style="height:25px;font-size:14pt;color:grey;" type="text" name="location"><br><br>
 
-    finally:
-        cursor.close()
+		  		Image: <input type=file name="emp_image_file" style="height:25px;font-size:14pt;color:grey;"> <br><br>
 
-    # Returning the employee name and image URL to the template
-    return render_template('AddEmpOutput.html', name=emp_name, image_url=object_url)
+		  		<button type="submit" style="background: grey; height: 45px; width: 200px; color: white; size: 5; font:oblique;">UPDATE DATABASE</button>
+
+			</form>
+<a href="/about">About Us</a>
+		</body>
+
+	</font>
+</center>
+</html>
