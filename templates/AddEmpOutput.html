@@ -1,23 +1,47 @@
-<!DOCTYPE html>
-<html>
-<head>
-<center>
-	<font color="DodgerBlue" size="5" style="font-family: avenir">
-		<body bgcolor="lightgrey">
-			<h1>SAVE SUCCESSFUL</h1><br>
-			<h2>Student info added</h2><br>
-			<h2>{{ name }}</h2><br>
-			<title>Add Emp Output</title>
-				<form action="http://3.134.115.108:80/" autocomplete="on" method = "GET">
+@app.route("/addemp", methods=['POST'])
+def AddEmp():
+    empid = request.form.get('empid')
+    first_name = request.form.get('first_name')
+    last_name = request.form.get('last_name')
+    pri_skill = request.form.get('pri_skill')
+    location = request.form.get('location')
+    emp_image_file = request.files.get('emp_image_file')
 
-					<button type="submit" style="background: grey; height: 45px; width: 200px; color:white; font:oblique;">GO BACK</button><br><br>
+    if not emp_image_file or emp_image_file.filename == "":
+        return "Please select a file"
 
-				</form>
-		</body>
-	</font>
-</center>
-</head>
-<body>
+    insert_sql = "INSERT INTO employee VALUES (%s, %s, %s, %s, %s)"
+    cursor = db_conn.cursor()
 
-</body>
-</html>
+    try:
+        cursor.execute(insert_sql, (empid, first_name, last_name, pri_skill, location))
+        db_conn.commit()
+        emp_name = f"{first_name} {last_name}"
+
+        # Upload image file to S3
+        emp_image_file_name_in_s3 = f"emp-id-{empid}_image_file"
+        s3 = boto3.resource('s3')
+
+        try:
+            s3.Bucket(custombucket).put_object(Key=emp_image_file_name_in_s3, Body=emp_image_file)
+            bucket_location = boto3.client('s3').get_bucket_location(Bucket=custombucket)
+            s3_location = bucket_location['LocationConstraint']
+
+            if s3_location is None:
+                s3_location = ''
+            else:
+                s3_location = f"-{s3_location}"
+
+            object_url = f"https://s3{s3_location}.amazonaws.com/{custombucket}/{emp_image_file_name_in_s3}"
+
+        except Exception as e:
+            return f"Error uploading to S3: {str(e)}"
+
+    except Exception as db_error:
+        return f"Database Error: {str(db_error)}"
+
+    finally:
+        cursor.close()
+
+    # Returning the employee name and image URL to the template
+    return render_template('AddEmpOutput.html', name=emp_name, image_url=object_url)
