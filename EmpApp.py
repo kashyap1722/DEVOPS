@@ -113,38 +113,13 @@ def GetEmp():
 
     print("all modification done...")
     return render_template('AddEmpOutput.html', name=emp_name)
-    @app.route("/updateemp", methods=['GET', 'POST'])
-def UpdateEmp():
-    if request.method == 'POST':  # If the form is submitted
-        empid = request.form['empid']  # Get the employee ID from the form
-        cursor = db_conn.cursor()
-
-        # SQL query to get the employee's current information
-        query = "SELECT * FROM employee WHERE empid = %s"
-        try:
-            cursor.execute(query, (empid,))
-            record = cursor.fetchone()  # Get the employee record
-
-            if record:
-                # Display the form with current information
-                return render_template('UpdateEmpForm.html', data=record)
-            else:
-                return "Employee not found."
-        except Exception as e:
-            return f"Error: {str(e)}"
-        finally:
-            cursor.close()
-
-    else:
-        return render_template('UpdateEmpForm.html')  # Show empty form if the page is just loaded
-
 
 @app.route("/updateemp/<empid>", methods=['POST'])
-def process_update_emp(empid):
-    first_name = request.form.get('first_name')
-    last_name = request.form.get('last_name')
-    pri_skill = request.form.get('pri_skill')
-    location = request.form.get('location')
+def UpdateEmp(empid):
+    first_name = request.form['first_name']
+    last_name = request.form['last_name']
+    pri_skill = request.form['pri_skill']
+    location = request.form['location']
 
     cursor = db_conn.cursor()
     update_sql = """
@@ -152,7 +127,6 @@ def process_update_emp(empid):
         SET first_name = %s, last_name = %s, pri_skill = %s, location = %s
         WHERE empid = %s
     """
-
     try:
         cursor.execute(update_sql, (first_name, last_name, pri_skill, location, empid))
         db_conn.commit()
@@ -161,7 +135,8 @@ def process_update_emp(empid):
         return f"Error updating employee information: {str(e)}"
     finally:
         cursor.close()
-@app.route("/deleteemp", methods=['POST'])
+
+   @app.route("/deleteemp", methods=['POST'])
 def DeleteEmp():
     empid = request.form['empid']  # Get the employee ID to delete
     cursor = db_conn.cursor()
