@@ -1,6 +1,6 @@
 customhost = "dbempppp.chw4esqowxis.us-east-1.rds.amazonaws.com"
 customuser = "admin"
 custompass = "password"
-customdb = "dbempppp"
+customdb = "employee"
 custombucket = "empbuvket"
 customregion = "us-east-1"
