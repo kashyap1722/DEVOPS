@@ -30,9 +30,9 @@ def about():
 @app.route("/addemp", methods=['POST'])
 def AddEmp():
     empid = request.form['empid']
-    first_name = request.form['first_name']
-    last_name = request.form['last_name']
-    pri_skill = request.form['pri_skill']
+    firstname = request.form['firstname']
+    lastname = request.form['lastname']
+    priskill = request.form['priskill']
     location = request.form['location']
     emp_image_file = request.files['emp_image_file']
 
@@ -41,12 +41,12 @@ def AddEmp():
         return "Please select a file"
 
     try:
-        insert_sql = "INSERT INTO employee (empid, first_name, last_name, pri_skill, location) VALUES (%s, %s, %s, %s, %s)"
+        insert_sql = "INSERT INTO employee (empid, firstname, lastname, priskill, location) VALUES (%s, %s, %s, %s, %s)"
         cursor = db_conn.cursor()
-        cursor.execute(insert_sql, (empid, first_name, last_name, pri_skill, location))
+        cursor.execute(insert_sql, (empid, firstname, lastname, priskill, location))
         db_conn.commit()
 
-        emp_name = f"{first_name} {last_name}"
+        emp_name = f"{firstname} {lastname}"
 
         # Upload image file to S3
         emp_image_file_name_in_s3 = f"emp-id-{empid}_image_file"
@@ -78,16 +78,16 @@ def AddEmp():
 @app.route('/getemp', methods=['GET'])
 def get_employee():
     cursor = db_conn.cursor()
-    cursor.execute("SELECT empid, first_name, last_name, pri_skill, location, emp_image_url FROM employee")
+    cursor.execute("SELECT empid, firstname, lastname, priskill, location, emp_image_url FROM employee")
     employees = cursor.fetchall()
 
     employee_list = []
     for emp in employees:
-        empid, first_name, last_name, pri_skill, location, emp_image_url = emp
+        empid, firstname, lastname, priskill, location, emp_image_url = emp
         employee_list.append({
             'empid': empid,
-            'name': f"{first_name} {last_name}",
-            'skills': pri_skill,
+            'name': f"{firstname} {lastname}",
+            'skills': priskill,
             'location': location,
             'image': emp_image_url
         })
