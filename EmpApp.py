@@ -62,10 +62,11 @@ def AddEmp():
         object_url = f"https://s3{s3_location}.amazonaws.com/{custombucket}/{emp_image_file_name_in_s3}"
 
         # Update the employee record with the image URL (optional)
-        update_sql = "UPDATE employee SET emp_image_url = %s WHERE empid = %s"
+        update_sql = "UPDATE employee SET empimageurl = %s WHERE empid = %s"
         cursor.execute(update_sql, (object_url, empid))
         db_conn.commit()
 
+  
         print("All modifications done...")
     except Exception as e:
         return str(e)
