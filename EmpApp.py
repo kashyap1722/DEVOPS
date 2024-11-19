@@ -136,19 +136,27 @@ def UpdateEmp(empid):
     finally:
         cursor.close()
 
-   @app.route("/deleteemp", methods=['POST'])
 @app.route("/deleteemp", methods=['POST'])
 def DeleteEmp():
     # Retrieve the employee ID from the form
     empid = request.form['empid']
+    
+    # Create a cursor to interact with the database
     cursor = db_conn.cursor()
-
+    
+    # SQL query to delete the employee
     delete_sql = "DELETE FROM employee WHERE empid = %s"
+    
     try:
+        # Execute the delete query
         cursor.execute(delete_sql, (empid,))
-        db_conn.commit()
+        db_conn.commit()  # Commit the changes to the database
+        
         return f"Employee with ID {empid} deleted successfully."
+    
     except Exception as e:
         return f"Error deleting employee: {str(e)}"
+    
     finally:
-        cursor.close()
+        cursor.close()  # Close the cursor when done
+
