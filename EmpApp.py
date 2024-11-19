@@ -1,137 +1,58 @@
-from flask import Flask, render_template, request
-from pymysql import connections
+from flask import Flask, render_template, request, redirect, url_for
 import os
-import boto3
-from config import *
 
 app = Flask(__name__)
 
-bucket = custombucket
-region = customregion
+# Simulated employee data (replace with a database in a real app)
+employee_data = {}
 
-db_conn = connections.Connection(
-    host=customhost,
-    port=3306,
-    user=customuser,
-    password=custompass,
-    db=customdb
+@app.route('/addemp', methods=['GET', 'POST'])
+def add_employee():
+    if request.method == 'POST':
+        # Retrieve employee data from the form
+        emp_id = request.form['emp_id']
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        pri_skill = request.form['pri_skill']
+        location = request.form['location']
+        emp_image_file = request.files['emp_image_file']
+        
+        # Save the employee data (simulated)
+        employee_data[emp_id] = {
+            'emp_id': emp_id,
+            'first_name': first_name,
+            'last_name': last_name,
+            'pri_skill': pri_skill,
+            'location': location,
+            'emp_image_file': emp_image_file.filename if emp_image_file else None
+        }
 
-)
-output = {}
-table = 'employee'
+        # Save the image (if provided)
+        if emp_image_file:
+            image_path = os.path.join('static', 'images', emp_image_file.filename)
+            emp_image_file.save(image_path)
+        
+        # Return to the success page with employee name
+        name = f"{first_name} {last_name}"
+        return render_template('AddEmpOutput.html', name=name)
 
-
-@app.route("/", methods=['GET', 'POST'])
-def home():
     return render_template('AddEmp.html')
 
-
-@app.route("/about", methods=['POST'])
-def about():
-    return render_template('www.intellipaat.com')
-
-
-@app.route("/addemp", methods=['POST'])
-def AddEmp():
-    emp_id = request.form['emp_id']
-    first_name = request.form['first_name']
-    last_name = request.form['last_name']
-    pri_skill = request.form['pri_skill']
-    location = request.form['location']
-    emp_image_file = request.files['emp_image_file']
-
-    insert_sql = "INSERT INTO employee VALUES (%s, %s, %s, %s, %s)"
-    cursor = db_conn.cursor()
-
-    if emp_image_file.filename == "":
-        return "Please select a file"
-
-    try:
-
-        cursor.execute(insert_sql, (emp_id, first_name, last_name, pri_skill, location))
-        db_conn.commit()
-        emp_name = "" + first_name + " " + last_name
-        # Uplaod image file in S3 #
-        emp_image_file_name_in_s3 = "emp_id-" + str(emp_id) + "_image_file"
-        s3 = boto3.resource('s3')
-
-        try:
-            print("Data inserted in MySQL RDS... uploading image to S3...")
-            s3.Bucket(custombucket).put_object(Key=emp_image_file_name_in_s3, Body=emp_image_file)
-            bucket_location = boto3.client('s3').get_bucket_location(Bucket=custombucket)
-            s3_location = (bucket_location['LocationConstraint'])
-
-            if s3_location is None:
-                s3_location = ''
-            else:
-                s3_location = '-' + s3_location
-
-            object_url = "https://s3{0}.amazonaws.com/{1}/{2}".format(
-                s3_location,
-                custombucket,
-                emp_image_file_name_in_s3)
-
-        except Exception as e:
-            return str(e)
-
-    finally:
-        cursor.close()
-
-    print("all modification done...")
-    return render_template('AddEmpOutput.html', name=emp_name)
-
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=True)
-
-
-
-
-
-
-
-from flask import Flask, request, render_template
-
-app = Flask(__name__)
-
-# Mock employee data (in a real-world app, this would come from a database)
-employee_data = []
-
-@app.route('/')
-def home():
-    return render_template('index.html')  # This serves the index.html file
-
-# Route to get employee info
 @app.route('/getemp', methods=['GET'])
-def get_emp():
-    return {'employees': employee_data}  # Just returns the employee data in JSON format
-
-# Route to add or update employee info
-@app.route('/addemp', methods=['POST'])
-def add_emp():
-    emp_id = request.form.get('emp_id')
-    first_name = request.form.get('first_name')
-    last_name = request.form.get('last_name')
-    pri_skill = request.form.get('pri_skill')
-    location = request.form.get('location')
-    emp_image = request.files.get('emp_image_file')  # image file (not used here, but you can store it)
-
-    # Create a new employee record (just a simple dict for now)
-    new_employee = {
-        'emp_id': emp_id,
-        'first_name': first_name,
-        'last_name': last_name,
-        'pri_skill': pri_skill,
-        'location': location,
-        'emp_image': emp_image.filename if emp_image else None
-    }
-
-    employee_data.append(new_employee)
-
-    return f"Employee {first_name} {last_name} added/updated successfully!"
+def get_employee():
+    # For simplicity, let's show all employees. In a real app, you'd retrieve this from a database.
+    employee_list = []
+    for emp_id, emp_info in employee_data.items():
+        employee_list.append({
+            'emp_id': emp_info['emp_id'],
+            'name': f"{emp_info['first_name']} {emp_info['last_name']}",
+            'skills': emp_info['pri_skill'],
+            'location': emp_info['location'],
+            'image': emp_info['emp_image_file']
+        })
+    
+    # Render employee information in a new page
+    return render_template('EmployeeList.html', employee_list=employee_list)
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-
