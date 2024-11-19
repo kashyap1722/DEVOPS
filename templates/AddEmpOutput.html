@@ -1,37 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Jayanth Kasyap info</title>
-</head>
 <center>
-	<font color="black" size="4" style="font-family: avenir">
-
-		<h1 style="color: DodgerBlue">Employee Database</h1>
-
+	<font color="DodgerBlue" size="5" style="font-family: avenir">
 		<body bgcolor="lightgrey">
+			<h1>SAVE SUCCESSFUL</h1><br>
+			<h2>Student info added</h2><br>
+			<h2>{{ name }}</h2><br>
+			<title>Add Emp Output</title>
+				<form action="http://3.134.115.108:80/" autocomplete="on" method = "GET">
 
-			<form action="/addemp" autocomplete="on" method = "POST" enctype="multipart/form-data">
+					<button type="submit" style="background: grey; height: 45px; width: 200px; color:white; font:oblique;">GO BACK</button><br><br>
 
-				<button type="submit" formaction="/getemp" style="background: grey; height: 45px; width: 200px; color:white; font:oblique;">GET EMPLOYEE INFORMATION</button><br><br>
-
-		  		Employee ID:<br> <input style="height:25px;font-size:14pt; color:grey;" type="number" name="empid" autofocus size="40"><br><br>
-
-		  		First Name:<br> <input style="height:25px;font-size:14pt;color:grey;" type="text" name="first_name" ><br><br>
-
-		  		Last Name:<br> <input style="height:25px;font-size:14pt;color:grey;" type="text" name="last_name"><br><br>
-
-		  		Primary Skills:<br> <input style="height:25px;font-size:14pt;color:grey;" type="text" name="pri_skill"><br><br>
-
-		  		Location:<br> <input style="height:25px;font-size:14pt;color:grey;" type="text" name="location"><br><br>
-
-		  		Resume: <input type=file name="emp_image_file" style="height:25px;font-size:14pt;color:grey;"> <br><br>
-
-		  		<button type="submit" style="background: grey; height: 45px; width: 200px; color: white; size: 5; font:oblique;">UPDATE DATABASE</button>
-
-			</form>
-<a href="/about">About Us</a>
+				</form>
 		</body>
-
 	</font>
 </center>
+</head>
+<body>
+
+</body>
 </html>
