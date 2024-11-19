@@ -90,38 +90,47 @@ if __name__ == '__main__':
 
 
 
-@app.route("/getemp", methods=['GET', 'POST'])
-def GetEmp():
-    if request.method == 'POST':  # When someone submits the form
-        emp_id = request.form['emp_id']  # Get the employee ID from the form
-        cursor = db_conn.cursor()  # Start a connection to the database
+from flask import Flask, request, render_template_string
 
-        # SQL query to find the employee
-        query = "SELECT * FROM employee WHERE emp_id = %s"
-        try:
-            cursor.execute(query, (emp_id,))  # Execute the query with the given emp_id
-            record = cursor.fetchone()  # Get the first result (if any)
+app = Flask(__name__)
 
-            if record:  # If we find an employee
-                emp_data = {
-                    "Employee ID": record[0],
-                    "First Name": record[1],
-                    "Last Name": record[2],
-                    "Primary Skill": record[3],
-                    "Location": record[4],
-                }
-                return render_template('GetEmpOutput.html', data=emp_data)  # Show details
-            else:  # If no employee is found
-                return "Employee not found."
-        except Exception as e:  # Catch any errors
-            return f"Error: {str(e)}"
-        finally:
-            cursor.close()  # Close the database connection
-    else:  # If someone just opens the page without submitting
-        return render_template('GetEmp.html')  # Show the form to enter an employee ID
+# Mock employee data (in a real-world app, this would come from a database)
+employee_data = []
 
-    print("all modification done...")
-    return render_template('AddEmpOutput.html', name=emp_name)
+@app.route('/')
+def home():
+    return render_template_string(open('index.html').read())
 
+# Route to get employee info
+@app.route('/getemp', methods=['GET'])
+def get_emp():
+    return {'employees': employee_data}  # Just returns the employee data in JSON format
+
+# Route to add or update employee info
+@app.route('/addemp', methods=['POST'])
+def add_emp():
+    emp_id = request.form.get('emp_id')
+    first_name = request.form.get('first_name')
+    last_name = request.form.get('last_name')
+    pri_skill = request.form.get('pri_skill')
+    location = request.form.get('location')
+    emp_image = request.files.get('emp_image_file')  # image file (not used here, but you can store it)
+
+    # Create a new employee record (just a simple dict for now)
+    new_employee = {
+        'emp_id': emp_id,
+        'first_name': first_name,
+        'last_name': last_name,
+        'pri_skill': pri_skill,
+        'location': location,
+        'emp_image': emp_image.filename if emp_image else None
+    }
+
+    employee_data.append(new_employee)
+
+    return f"Employee {first_name} {last_name} added/updated successfully!"
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
 
