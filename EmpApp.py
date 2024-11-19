@@ -29,7 +29,7 @@ def about():
 
 @app.route("/addemp", methods=['POST'])
 def AddEmp():
-    emp_id = request.form['emp_id']
+    empid = request.form['empid']
     first_name = request.form['first_name']
     last_name = request.form['last_name']
     pri_skill = request.form['pri_skill']
@@ -41,15 +41,15 @@ def AddEmp():
         return "Please select a file"
 
     try:
-        insert_sql = "INSERT INTO employee (emp_id, first_name, last_name, pri_skill, location) VALUES (%s, %s, %s, %s, %s)"
+        insert_sql = "INSERT INTO employee (empid, first_name, last_name, pri_skill, location) VALUES (%s, %s, %s, %s, %s)"
         cursor = db_conn.cursor()
-        cursor.execute(insert_sql, (emp_id, first_name, last_name, pri_skill, location))
+        cursor.execute(insert_sql, (empid, first_name, last_name, pri_skill, location))
         db_conn.commit()
 
         emp_name = f"{first_name} {last_name}"
 
         # Upload image file to S3
-        emp_image_file_name_in_s3 = f"emp-id-{emp_id}_image_file"
+        emp_image_file_name_in_s3 = f"emp-id-{empid}_image_file"
         s3 = boto3.resource('s3')
         print("Data inserted in MySQL RDS... uploading image to S3...")
 
@@ -62,8 +62,8 @@ def AddEmp():
         object_url = f"https://s3{s3_location}.amazonaws.com/{custombucket}/{emp_image_file_name_in_s3}"
 
         # Update the employee record with the image URL (optional)
-        update_sql = "UPDATE employee SET emp_image_url = %s WHERE emp_id = %s"
-        cursor.execute(update_sql, (object_url, emp_id))
+        update_sql = "UPDATE employee SET emp_image_url = %s WHERE empid = %s"
+        cursor.execute(update_sql, (object_url, empid))
         db_conn.commit()
 
         print("All modifications done...")
@@ -78,14 +78,14 @@ def AddEmp():
 @app.route('/getemp', methods=['GET'])
 def get_employee():
     cursor = db_conn.cursor()
-    cursor.execute("SELECT emp_id, first_name, last_name, pri_skill, location, emp_image_url FROM employee")
+    cursor.execute("SELECT empid, first_name, last_name, pri_skill, location, emp_image_url FROM employee")
     employees = cursor.fetchall()
 
     employee_list = []
     for emp in employees:
-        emp_id, first_name, last_name, pri_skill, location, emp_image_url = emp
+        empid, first_name, last_name, pri_skill, location, emp_image_url = emp
         employee_list.append({
-            'emp_id': emp_id,
+            'empid': empid,
             'name': f"{first_name} {last_name}",
             'skills': pri_skill,
             'location': location,
