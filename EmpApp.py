@@ -78,28 +78,29 @@ def AddEmp():
 
 
 
-@app.route('/getemp', methods=['GET'])
+@app.route('/getemp', methods=['POST'])
 def get_employee():
+    empid = request.form['empid']  # Access the 'empid' value from the form
     cursor = db_conn.cursor()
-    cursor.execute("SELECT empid, firstname, lastname, priskill, location, emp_image_url FROM employee")
-    employees = cursor.fetchall()
 
-    employee_list = []
-    for emp in employees:
-        empid, firstname, lastname, priskill, location, emp_image_url = emp
-        employee_list.append({
+    # Retrieve the specific employee by ID
+    cursor.execute(
+        "SELECT empid, firstname, lastname, priskill, location, emp_image_url FROM employee WHERE empid = %s",
+        (empid,)
+    )
+    employee = cursor.fetchone()
+
+    if employee:
+        empid, firstname, lastname, priskill, location, emp_image_url = employee
+        employee_data = {
             'empid': empid,
             'name': f"{firstname} {lastname}",
             'skills': priskill,
             'location': location,
             'image': emp_image_url
-        })
-
-    cursor.close()
-    
-    # Render employee information in a new page
-    return render_template('EmployeeList.html', employee_list=employee_list)
-
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=True)
+        }
+        cursor.close()
+        return render_template('EmployeeDetails.html', employee=employee_data)
+    else:
+        cursor.close()
+        return "Employee not found"
