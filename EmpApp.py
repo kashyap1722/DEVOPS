@@ -137,8 +137,10 @@ def UpdateEmp(empid):
         cursor.close()
 
    @app.route("/deleteemp", methods=['POST'])
+@app.route("/deleteemp", methods=['POST'])
 def DeleteEmp():
-    empid = request.form['empid']  # Get the employee ID to delete
+    # Retrieve the employee ID from the form
+    empid = request.form['empid']
     cursor = db_conn.cursor()
 
     delete_sql = "DELETE FROM employee WHERE empid = %s"
@@ -150,27 +152,3 @@ def DeleteEmp():
         return f"Error deleting employee: {str(e)}"
     finally:
         cursor.close()
-<!-- UpdateEmpForm.html -->
-<form method="POST" action="{{ url_for('process_update_emp', empid=data[0]) }}">
-    <label for="empid">Employee ID</label>
-    <input type="text" id="empid" name="empid" value="{{ data[0] }}" readonly>
-
-    <label for="first_name">First Name</label>
-    <input type="text" id="first_name" name="first_name" value="{{ data[1] }}">
-
-    <label for="last_name">Last Name</label>
-    <input type="text" id="last_name" name="last_name" value="{{ data[2] }}">
-
-    <label for="pri_skill">Primary Skill</label>
-    <input type="text" id="pri_skill" name="pri_skill" value="{{ data[3] }}">
-
-    <label for="location">Location</label>
-    <input type="text" id="location" name="location" value="{{ data[4] }}">
-
-    <input type="submit" value="Update Information">
-</form>
-
-
-
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=True)
