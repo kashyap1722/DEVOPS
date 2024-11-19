@@ -77,7 +77,7 @@ def AddEmp():
     finally:
         cursor.close()
 
-    @app.route("/getemp", methods=['GET', 'POST'])
+@app.route("/getemp", methods=['GET', 'POST'])
 def GetEmp():
     if request.method == 'POST':  # When someone submits the form
         emp_id = request.form['emp_id']  # Get the employee ID from the form
@@ -106,10 +106,6 @@ def GetEmp():
             cursor.close()  # Close the database connection
     else:  # If someone just opens the page without submitting
         return render_template('GetEmp.html')  # Show the form to enter an employee ID
-
-# Existing "run the app" code...
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=80, debug=True)
 
     print("all modification done...")
     return render_template('AddEmpOutput.html', name=emp_name)
