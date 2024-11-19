@@ -114,27 +114,5 @@ def GetEmp():
     print("all modification done...")
     return render_template('AddEmpOutput.html', name=emp_name)
 
-@app.route("/updateemp/<empid>", methods=['POST'])
-def UpdateEmp(empid):
-    first_name = request.form['first_name']
-    last_name = request.form['last_name']
-    pri_skill = request.form['pri_skill']
-    location = request.form['location']
-
-    cursor = db_conn.cursor()
-    update_sql = """
-        UPDATE employee 
-        SET first_name = %s, last_name = %s, pri_skill = %s, location = %s
-        WHERE empid = %s
-    """
-    try:
-        cursor.execute(update_sql, (first_name, last_name, pri_skill, location, empid))
-        db_conn.commit()
-        return f"Employee {empid} information updated successfully."
-    except Exception as e:
-        return f"Error updating employee information: {str(e)}"
-    finally:
-        cursor.close()
-
 
 
