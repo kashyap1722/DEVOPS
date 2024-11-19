@@ -2,19 +2,18 @@
 <html>
 <head>
     <title>Get Employee</title>
+    <!-- Optionally, you could add some CSS here to style the page -->
 </head>
 <body bgcolor="lightgrey">
-    <font color="black" size="5" style="font-family: avenir">
+    <div style="font-family: Avenir, sans-serif; color: black; font-size: 20px;">
+        <h1 style="color: DodgerBlue">Employee Information</h1>
+        <h2>Get Employee Information</h2>
 
-    <h1 style="color: DodgerBlue">Employee Information</h1>
-
-    <h1>Get Employee Information</h1>
-    <form method="POST" action="/getemp">
-        <label for="empid">Employee ID:</label>
-        <input type="text" id="empid" name="empid" required>
-        <button type="submit">Search</button>
-    </form>
-
-    </font>
+        <form method="POST" action="/getemp">
+            <label for="empid">Employee ID:</label>
+            <input type="text" id="empid" name="empid" required>
+            <button type="submit">Search</button>
+        </form>
+    </div>
 </body>
 </html>
