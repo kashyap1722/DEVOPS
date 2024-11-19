@@ -2,22 +2,22 @@
 <html>
 <head>
     <title>Employee Details</title>
+    <!-- You can add CSS styling here or in a separate file -->
 </head>
-<body>
-	<font color="black" size="5" style="font-family: avenir">
+<body bgcolor="lightgrey">
+    <div style="font-family: Avenir, sans-serif; color: black; font-size: 20px;">
+        <h1 style="color: DodgerBlue">Employee Information</h1>
+        <h2>Employee Details</h2>
 
-		<h1 style="color: DodgerBlue">Employee Information</h1>
-
-		<body bgcolor="lightgrey">
-    <h1>Employee Details</h1>	
-    {% if data %}
-        <p><strong>Employee ID:</strong> {{ data['Employee ID'] }}</p>
-        <p><strong>First Name:</strong> {{ data['First Name'] }}</p>
-        <p><strong>Last Name:</strong> {{ data['Last Name'] }}</p>
-        <p><strong>Primary Skill:</strong> {{ data['Primary Skill'] }}</p>
-        <p><strong>Location:</strong> {{ data['Location'] }}</p>
-    {% else %}
-        <p>No employee found.</p>
-    {% endif %}
+        {% if data %}
+            <p><strong>Employee ID:</strong> {{ data['Employee ID'] }}</p>
+            <p><strong>First Name:</strong> {{ data['First Name'] }}</p>
+            <p><strong>Last Name:</strong> {{ data['Last Name'] }}</p>
+            <p><strong>Primary Skill:</strong> {{ data['Primary Skill'] }}</p>
+            <p><strong>Location:</strong> {{ data['Location'] }}</p>
+        {% else %}
+            <p>No employee found.</p>
+        {% endif %}
+    </div>
 </body>
 </html>
