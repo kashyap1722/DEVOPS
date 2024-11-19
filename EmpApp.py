@@ -33,7 +33,7 @@ def about():
 
 @app.route("/addemp", methods=['POST'])
 def AddEmp():
-    empid = request.form['empid']
+    emp_id = request.form['emp_id']
     first_name = request.form['first_name']
     last_name = request.form['last_name']
     pri_skill = request.form['pri_skill']
@@ -52,7 +52,7 @@ def AddEmp():
         db_conn.commit()
         emp_name = "" + first_name + " " + last_name
         # Uplaod image file in S3 #
-        emp_image_file_name_in_s3 = "empid-" + str(empid) + "_image_file"
+        emp_image_file_name_in_s3 = "emp_id-" + str(emp_id) + "_image_file"
         s3 = boto3.resource('s3')
 
         try:
@@ -124,7 +124,7 @@ def about():
 
 @app.route("/addemp", methods=['POST'])
 def AddEmp():
-    empid = request.form['empid']
+    emp_id = request.form['emp_id']
     first_name = request.form['first_name']
     last_name = request.form['last_name']
     pri_skill = request.form['pri_skill']
@@ -143,7 +143,7 @@ def AddEmp():
         db_conn.commit()
         emp_name = "" + first_name + " " + last_name
         # Uplaod image file in S3 #
-        emp_image_file_name_in_s3 = "empid-" + str(empid) + "_image_file"
+        emp_image_file_name_in_s3 = "emp_id-" + str(emp_id) + "_image_file"
         s3 = boto3.resource('s3')
 
         try:
@@ -182,13 +182,13 @@ if __name__ == '__main__':
 @app.route("/getemp", methods=['GET', 'POST'])
 def GetEmp():
     if request.method == 'POST':  # When someone submits the form
-        empid = request.form['empid']  # Get the employee ID from the form
+        emp_id = request.form['emp_id']  # Get the employee ID from the form
         cursor = db_conn.cursor()  # Start a connection to the database
 
         # SQL query to find the employee
-        query = "SELECT * FROM employee WHERE empid = %s"
+        query = "SELECT * FROM employee WHERE emp_id = %s"
         try:
-            cursor.execute(query, (empid,))  # Execute the query with the given empid
+            cursor.execute(query, (emp_id,))  # Execute the query with the given emp_id
             record = cursor.fetchone()  # Get the first result (if any)
 
             if record:  # If we find an employee
